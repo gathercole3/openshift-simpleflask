@@ -1,7 +1,6 @@
 pipeline {
   agent { label('maven') }
   options {
-    timestamps()
     disableConcurrentBuilds()
   }
 
