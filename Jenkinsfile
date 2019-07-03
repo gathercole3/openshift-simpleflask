@@ -1,10 +1,16 @@
-node('maven') {
-      stage('Run a docker thing') {
-         sh 'ls /home/jenkins/workspace'
-         sh 'ls ${WORKSPACE}'
-         echo 'hello world'
-    }
+pipeline {
+  agent { label('maven') }
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+  }
 
+  stages {
+    stage('setup') {
+      steps {
+        echo "Hello world!"
+      }
+    }
   }
 
 }
