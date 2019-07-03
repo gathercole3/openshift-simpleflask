@@ -4,7 +4,7 @@ podTemplate(label: 'maven', containers: [
   ],
   volumes: [emptyDirVolume(memory: false, mountPath: '/var/lib/docker')]) {
 
-  node('dockerslave') {
+  node('maven') {
       checkout scm
       stage('Run a docker thing') {
       container('docker') {
