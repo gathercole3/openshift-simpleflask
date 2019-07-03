@@ -9,6 +9,8 @@ pipeline {
       steps {
         echo "Hello world!"
         echo "Hello world!"
+        sh "ls"
+        sh "docker images"
       }
     }
   }
