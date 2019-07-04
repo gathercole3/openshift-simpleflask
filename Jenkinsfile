@@ -5,7 +5,8 @@ pipeline {
   }
 
   environment {
-        OPENSHIFT_PROJECT = 'sandbox' // name of the Openshift project where this 'app' will be deployed to.
+        OPENSHIFT_PROJECT = 'sandbox'
+  }
 
   stages {
     stage('setup') {
