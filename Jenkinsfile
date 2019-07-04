@@ -6,6 +6,8 @@ pipeline {
 
   environment {
         OPENSHIFT_PROJECT = 'sandbox'
+        APP_NAME = 'simpleflask'
+        BC_NAME = '${APP_NAME}-build-${GIT_COMMIT}'
   }
 
   stages {
@@ -20,14 +22,24 @@ pipeline {
     stage('build and publish docker image to external registry') {
       steps {
         echo 'Building and publishing docker image to nexus.'
-            sh '''
-              oc start-build simpleflask-build-latest -n sandbox \
+
+        sh '''
+                    oc get bc/${BC_NAME} \
+                        || oc new-build \
+                            --binary=true  \
+                            --name="${BC_NAME}" \
+                            --to="${OPENSHIFT_PROJECT}/${APP_NAME}:${IMAGE_TAG}" \
+                            --strategy="docker"
+                    '''
+
+        sh '''
+              oc start-build ${BC_NAME} -n sandbox \
               --from-repo=. \
               --follow=true \
               --wait=true \
               --commit=${GIT_COMMIT}
               '''
-            }
+        }
 
 
         }
