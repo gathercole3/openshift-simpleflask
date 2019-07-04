@@ -28,7 +28,7 @@ pipeline {
                         || oc new-build \
                             --binary=true  \
                             --name="${BC_NAME}" \
-                            --to="${OPENSHIFT_PROJECT}/${APP_NAME}:${IMAGE_TAG}" \
+                            --to="docker-registry.default.svc:5000/${OPENSHIFT_PROJECT}/${APP_NAME}:${GIT_COMMIT}" \
                             --strategy="docker"
                     '''
 
