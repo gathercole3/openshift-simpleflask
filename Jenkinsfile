@@ -16,6 +16,18 @@ pipeline {
         echo "${GIT_COMMIT}"
       }
     }
+
+    stage('build and publish docker image to external registry') {
+      steps {
+        echo 'Building and publishing docker image to nexus.'
+            sh '''
+              oc start-build simpleflask-build-latest -n sandbox \
+              --from-dir=. \
+              --follow=true \
+              --wait=true
+              '''
+            }
+        }
   }
 
 }
