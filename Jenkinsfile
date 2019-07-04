@@ -1,5 +1,5 @@
 pipeline {
-  agent { label('docker') }
+  agent { label('maven') }
   options {
     disableConcurrentBuilds()
   }
@@ -10,7 +10,7 @@ pipeline {
         echo "Hello world!"
         echo "Webhook test"
         sh "ls"
-        sh "docker images"
+        sh "oc --version"
       }
     }
   }
