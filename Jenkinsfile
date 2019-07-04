@@ -22,11 +22,14 @@ pipeline {
         echo 'Building and publishing docker image to nexus.'
             sh '''
               oc start-build simpleflask-build-latest -n sandbox \
-              --from-dir=. \
+              --from-repo=. \
               --follow=true \
-              --wait=true
+              --wait=true \
+              --commit=${GIT_COMMIT}
               '''
             }
+
+
         }
   }
 
