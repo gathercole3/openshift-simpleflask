@@ -7,7 +7,7 @@ pipeline {
   environment {
         OPENSHIFT_PROJECT = 'sandbox'
         APP_NAME = 'simpleflask'
-        BC_NAME = '${APP_NAME}-build-${GIT_COMMIT}'
+        BC_NAME = "${APP_NAME}-build-${GIT_COMMIT}"
   }
 
   stages {
