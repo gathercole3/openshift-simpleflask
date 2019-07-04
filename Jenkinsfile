@@ -13,6 +13,7 @@ pipeline {
       steps {
         echo "Set Openshift project"
         sh "oc project ${OPENSHIFT_PROJECT}"
+        echo "${GIT_COMMIT}"
       }
     }
   }
