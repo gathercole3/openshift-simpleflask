@@ -8,7 +8,7 @@ pipeline {
     stage('setup') {
       steps {
         echo "Hello world!"
-        echo "Hello world!"
+        echo "Webhook test"
         sh "ls"
         sh "docker images"
       }
