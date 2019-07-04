@@ -41,8 +41,15 @@ pipeline {
               '''
         }
 
-
+      post {
+        always { 
+            echo 'cleanup build config'
+            sh 'oc delete bc/${BC_NAME}'
         }
+      }
+
+
+    }
   }
 
 }
