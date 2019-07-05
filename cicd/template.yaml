@@ -15,7 +15,7 @@ objects:
       image: ${DOCKER_IMAGE}
       name: simpleflask
       ports:
-      - containerPort: 8080
+      - containerPort: 8000
         protocol: TCP
 parameters:
 - description: configmap to use for environment variables

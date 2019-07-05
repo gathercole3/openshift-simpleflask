@@ -26,8 +26,9 @@ pipeline {
       steps {
         sh '''
         oc create configmap ${CM_NAME} \
-          --from-literal=foo=bar \
-          --from-literal=bar=foo
+          --from-literal=APP_NAME=flask-frontend-skeleton \
+          --from-literal=FLASK_LOG_LEVEL=DEBUG \
+          --from-literal=PYTHONPATH=/opt
         '''
       }
     }
@@ -68,7 +69,7 @@ pipeline {
             }
             steps {
                  sh '''
-                    oc new-app -f ./template.yaml \
+                    oc new-app -f ./cicd/template.yaml \
                       -p CONFIG_MAP=${CM_NAME} \
                       -p DOCKER_IMAGE=${IMAGE_NAME}
                     '''
