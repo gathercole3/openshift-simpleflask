@@ -67,7 +67,6 @@ pipeline {
                 expression { BRANCH_NAME == 'master' }
             }
             steps {
-                 sh 'oc import-image ${TAGGED_APP_NAME} --from=${EXTERNAL_DOCKER_REGISTRY}/${APP_NAME}:latest --confirm'
                  sh '''
                     oc new-app -f template.yaml \
                       -p CONFIG_MAP=${CM_NAME},DOCKER_IMAGE=${IMAGE_NAME}
