@@ -3,6 +3,7 @@ pipeline {
   options {
     disableConcurrentBuilds()
   }
+  
 
   environment {
         OPENSHIFT_PROJECT = 'sandbox'
