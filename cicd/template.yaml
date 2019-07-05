@@ -6,12 +6,12 @@ objects:
 - apiVersion: v1
   kind: Pod
   metadata:
-    name: simpleflask
+    generateName: simpleflask-
   spec:
     containers:
     - envFrom: 
         - configMapRef:
-            generateName: ${CONFIG_MAP}-
+            name: ${CONFIG_MAP}
       image: ${DOCKER_IMAGE}
       name: simpleflask
       ports:
