@@ -55,9 +55,6 @@ pipeline {
               --wait=true \
               --commit=${GIT_COMMIT}
               '''
-
-        DEPLOYED_POD_NAME=readFile("${POD_NAME_FILE}").trim()
-        echo DEPLOYED_POD_NAME
         }
 
       post {
@@ -107,6 +104,7 @@ pipeline {
                                 | cut -d ' ' -f 2  >${POD_NAME_FILE}
                     '''
 
+                 DEPLOYED_POD_NAME=readFile("${POD_NAME_FILE}").trim()
                  echo DEPLOYED_POD_NAME
               }
           }
