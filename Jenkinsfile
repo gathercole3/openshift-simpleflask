@@ -104,7 +104,10 @@ pipeline {
                                 | cut -d ' ' -f 2  >${POD_NAME_FILE}
                     '''
 
-                 echo readFile("${POD_NAME_FILE}").trim()
+
+                 sh '''
+                    oc exec $(cat ${POD_NAME_FILE}) make unittest
+                '''
               }
           }
 
