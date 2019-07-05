@@ -25,8 +25,8 @@ pipeline {
       steps {
         sh '''
         oc create configmap ${CM_NAME} \
-          --from-literal=special.how=very \
-          --from-literal=special.type=charm
+          --from-literal=foo=bar \
+          --from-literal=bar=foo
         '''
       }
     }
