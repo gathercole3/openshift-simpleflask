@@ -69,7 +69,8 @@ pipeline {
             steps {
                  sh '''
                     oc new-app -f template.yaml \
-                      -p CONFIG_MAP=${CM_NAME},DOCKER_IMAGE=${IMAGE_NAME}
+                      -p CONFIG_MAP=${CM_NAME} \
+                      -p DOCKER_IMAGE=${IMAGE_NAME}
                     '''
               }
           }
