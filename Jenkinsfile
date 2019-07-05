@@ -11,6 +11,8 @@ pipeline {
         CM_NAME = "${APP_NAME}-${GIT_COMMIT}"
         IMAGE_NAME= "docker-registry.default.svc:5000/${OPENSHIFT_PROJECT}/${APP_NAME}:${GIT_COMMIT}"
         POD_NAME= "${APP_NAME}-${GIT_COMMIT}-"
+
+        DEPLOYED_POD_NAME= ""
   }
 
   stages {
@@ -77,6 +79,34 @@ pipeline {
                     '''
               }
           }
+
+
+    stage('run unit tests') {
+            when {
+                expression { BRANCH_NAME == 'master' }
+            }
+            steps {
+                 sh '''
+                    oc new-app -f ./cicd/template.yaml \
+                      -p CONFIG_MAP=${CM_NAME} \
+                      -p DOCKER_IMAGE=${IMAGE_NAME} \
+                      -p POD_NAME=${POD_NAME}
+                    '''
+
+                 DEPLOYED_POD_NAME=sh '''
+                    oc get pods --field-selector=status.phase=Running \
+                                | grep "${TAGGED_APP_NAME}" \
+                                | cut -d ' ' -f 1 \
+                                | awk -F- '{ print $(NF-1), $0 }' \
+                                | sort -k1 -n -u \
+                                | tail -n1 \
+                                | cut -d ' ' -f 2
+                    '''
+
+                 echo DEPLOYED_POD_NAME
+              }
+          }
+
   }
 
   post {
