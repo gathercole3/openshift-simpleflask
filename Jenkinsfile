@@ -117,9 +117,11 @@ pipeline {
   post {
     always { 
         echo 'cleanup configmap'
-        if( BRANCH_NAME.startsWith('PR-') ) {
-          sh 'oc delete configmaps ${CM_NAME}'
-          sh 'oc delete pod $(cat ${POD_NAME_FILE})'
+        script {
+          if( BRANCH_NAME.startsWith('PR-') ) {
+            sh 'oc delete configmaps ${CM_NAME}'
+            sh 'oc delete pod $(cat ${POD_NAME_FILE})'
+          }
         }
     }
   }
