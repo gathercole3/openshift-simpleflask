@@ -104,8 +104,7 @@ pipeline {
                                 | cut -d ' ' -f 2  >${POD_NAME_FILE}
                     '''
 
-                 DEPLOYED_POD_NAME=readFile("${POD_NAME_FILE}").trim()
-                 echo DEPLOYED_POD_NAME
+                 echo readFile("${POD_NAME_FILE}").trim()
               }
           }
 
