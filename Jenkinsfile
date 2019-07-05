@@ -13,6 +13,7 @@ pipeline {
         POD_NAME= "${APP_NAME}-${GIT_COMMIT}-"
 
         DEPLOYED_POD_NAME= ""
+        POD_NAME_FILE="POD_${GIT_COMMIT}.tmp"
   }
 
   stages {
@@ -54,6 +55,9 @@ pipeline {
               --wait=true \
               --commit=${GIT_COMMIT}
               '''
+
+        DEPLOYED_POD_NAME=readFile("${POD_NAME_FILE}").trim()
+        echo DEPLOYED_POD_NAME
         }
 
       post {
@@ -93,14 +97,14 @@ pipeline {
                       -p POD_NAME=${POD_NAME}
                     '''
 
-                 DEPLOYED_POD_NAME=sh '''
+                 sh '''
                     oc get pods --field-selector=status.phase=Running \
                                 | grep "${TAGGED_APP_NAME}" \
                                 | cut -d ' ' -f 1 \
                                 | awk -F- '{ print $(NF-1), $0 }' \
                                 | sort -k1 -n -u \
                                 | tail -n1 \
-                                | cut -d ' ' -f 2
+                                | cut -d ' ' -f 2  >${POD_NAME_FILE}
                     '''
 
                  echo DEPLOYED_POD_NAME
