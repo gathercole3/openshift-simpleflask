@@ -10,6 +10,7 @@ pipeline {
         BC_NAME = "${APP_NAME}-build-${GIT_COMMIT}"
         CM_NAME = "${APP_NAME}-${GIT_COMMIT}"
         IMAGE_NAME= "docker-registry.default.svc:5000/${OPENSHIFT_PROJECT}/${APP_NAME}:${GIT_COMMIT}"
+        POD_NAME= "${APP_NAME}-${GIT_COMMIT}-"
   }
 
   stages {
@@ -71,7 +72,8 @@ pipeline {
                  sh '''
                     oc new-app -f ./cicd/template.yaml \
                       -p CONFIG_MAP=${CM_NAME} \
-                      -p DOCKER_IMAGE=${IMAGE_NAME}
+                      -p DOCKER_IMAGE=${IMAGE_NAME} \
+                      -p POD_NAME==${POD_NAME}
                     '''
               }
           }
