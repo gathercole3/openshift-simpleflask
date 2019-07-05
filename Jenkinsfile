@@ -73,7 +73,7 @@ pipeline {
                     oc new-app -f ./cicd/template.yaml \
                       -p CONFIG_MAP=${CM_NAME} \
                       -p DOCKER_IMAGE=${IMAGE_NAME} \
-                      -p POD_NAME==${POD_NAME}
+                      -p POD_NAME=${POD_NAME}
                     '''
               }
           }
