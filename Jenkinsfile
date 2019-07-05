@@ -57,6 +57,7 @@ pipeline {
         always { 
             echo 'cleanup build config'
             sh 'oc delete bc/${BC_NAME}'
+            sh 'oc delete configmaps ${CM_NAME}'
         }
       }
 
