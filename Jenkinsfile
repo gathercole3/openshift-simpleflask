@@ -9,6 +9,7 @@ pipeline {
         APP_NAME = 'simpleflask'
         BC_NAME = "${APP_NAME}-build-${GIT_COMMIT}"
         CM_NAME = "${APP_NAME}-${GIT_COMMIT}"
+        IMAGE_NAME= "docker-registry.default.svc:5000/${OPENSHIFT_PROJECT}/${APP_NAME}:${GIT_COMMIT}"
   }
 
   stages {
@@ -31,16 +32,14 @@ pipeline {
       }
     }
 
-    stage('build and publish docker image to external registry') {
+    stage('build and publish docker image to internal registry') {
       steps {
-        echo 'Building and publishing docker image to nexus.'
-
         sh '''
                     oc get bc/${BC_NAME} \
                         || oc new-build \
                             --binary=true  \
                             --name="${BC_NAME}" \
-                            --to="docker-registry.default.svc:5000/${OPENSHIFT_PROJECT}/${APP_NAME}:${GIT_COMMIT}" \
+                            --to="${IMAGE_NAME}" \
                             --strategy="docker"
                     '''
 
@@ -57,11 +56,30 @@ pipeline {
         always { 
             echo 'cleanup build config'
             sh 'oc delete bc/${BC_NAME}'
-            sh 'oc delete configmaps ${CM_NAME}'
         }
       }
 
 
+    }
+
+    stage('deploy docker image to openshift') {
+            when {
+                expression { BRANCH_NAME == 'master' }
+            }
+            steps {
+                 sh 'oc import-image ${TAGGED_APP_NAME} --from=${EXTERNAL_DOCKER_REGISTRY}/${APP_NAME}:latest --confirm'
+                 sh '''
+                    oc new-app -f template.yaml \
+                      -p CONFIG_MAP=${CM_NAME},DOCKER_IMAGE=${IMAGE_NAME}
+                    '''
+              }
+          }
+  }
+
+  post {
+    always { 
+        echo 'cleanup configmap'
+        //sh 'oc delete configmaps ${CM_NAME}'
     }
   }
 

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: simpleflask-template
+objects:
+- apiVersion: v1
+  kind: Pod
+  spec:
+    containers:
+    - envFrom: 
+        - configMapRef:
+            name: ${CONFIG_MAP}
+      image: ${DOCKER_IMAGE}
+      name: simpleflask
+      ports:
+      - containerPort: 8080
+        protocol: TCP
+parameters:
+- description: configmap to use for environment variables
+  name: CONFIG_MAP
+- description: docker image to be used
+  name: DOCKER_IMAGE
