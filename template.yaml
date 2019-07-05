@@ -5,6 +5,8 @@ metadata:
 objects:
 - apiVersion: v1
   kind: Pod
+  metadata:
+    name: simpleflask
   spec:
     containers:
     - envFrom: 
