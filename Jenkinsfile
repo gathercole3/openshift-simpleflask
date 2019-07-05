@@ -8,6 +8,7 @@ pipeline {
         OPENSHIFT_PROJECT = 'sandbox'
         APP_NAME = 'simpleflask'
         BC_NAME = "${APP_NAME}-build-${GIT_COMMIT}"
+        CM_NAME = "${APP_NAME}-${GIT_COMMIT}"
   }
 
   stages {
@@ -16,6 +17,17 @@ pipeline {
         echo "Set Openshift project"
         sh "oc project ${OPENSHIFT_PROJECT}"
         echo "${GIT_COMMIT}"
+      }
+    }
+
+
+    stage('build config map') {
+      steps {
+        sh '''
+        oc create configmap ${CM_NAME} \
+          --from-literal=special.how=very \
+          --from-literal=special.type=charm
+        '''
       }
     }
 
