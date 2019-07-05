@@ -69,7 +69,7 @@ pipeline {
 
     stage('deploy docker image to openshift') {
             when {
-                expression { BRANCH_NAME.startsWith('pr-')}
+                expression { BRANCH_NAME.startsWith('PR-')}
             }
             steps {
                  sh '''
@@ -84,7 +84,7 @@ pipeline {
 
     stage('run unit tests') {
             when {
-                expression { BRANCH_NAME.startsWith('pr-')}
+                expression { BRANCH_NAME.startsWith('PR-')}
             }
             steps {
                  sh '''
