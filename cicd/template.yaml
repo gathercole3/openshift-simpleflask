@@ -6,7 +6,7 @@ objects:
 - apiVersion: v1
   kind: Pod
   metadata:
-    generateName: simpleflask-
+    generateName: ${POD_NAME}
   spec:
     containers:
     - envFrom: 
@@ -22,3 +22,6 @@ parameters:
   name: CONFIG_MAP
 - description: docker image to be used
   name: DOCKER_IMAGE
+- description: name of pod to be deployed
+  name: POD_NAME
+  value: simpleflask-
