@@ -106,7 +106,7 @@ pipeline {
 
 
                  sh '''
-                    oc exec $(cat ${POD_NAME_FILE}) make unittest
+                    oc exec $(cat ${POD_NAME_FILE}) curl https://google.co.uk
                 '''
               }
           }
