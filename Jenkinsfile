@@ -114,6 +114,9 @@ pipeline {
                       fi
                     done
                     '''
+              
+                  echo 'printing pod file'
+                  sh "cat ${POD_NAME_FILE}"
 
 
                  sh '''
