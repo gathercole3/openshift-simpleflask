@@ -109,6 +109,14 @@ pipeline {
                                   | awk -F- '{ print $(NF-1), $0 }' \
                                   | sort -k1 -n -u \
                                   | tail -n1 \
+                                  | cut -d ' ' -f 2
+                                  
+                            oc get pods --field-selector=status.phase=Running \
+                                  | grep "${POD_NAME}" \
+                                  | cut -d ' ' -f 1 \
+                                  | awk -F- '{ print $(NF-1), $0 }' \
+                                  | sort -k1 -n -u \
+                                  | tail -n1 \
                                   | cut -d ' ' -f 2  >${POD_NAME_FILE}
                             break
                       fi
