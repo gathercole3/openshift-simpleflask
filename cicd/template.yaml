@@ -6,7 +6,7 @@ objects:
 - apiVersion: v1
   kind: Pod
   metadata:
-    generateName: ${POD_NAME}
+    name: ${POD_NAME}
   spec:
     containers:
     - envFrom: 
