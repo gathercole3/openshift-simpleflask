@@ -103,13 +103,7 @@ pipeline {
                             sleep 2
                             i=$((i + 1))
                       else
-                            echo $(oc get pods --field-selector=status.phase=Running \
-                                  | grep "${POD_NAME}" \
-                                  | cut -d ' ' -f 1 \
-                                  | awk -F- '{ print $(NF-1), $0 }' \
-                                  | sort -k1 -n -u \
-                                  | tail -n1 \
-                                  | cut -d ' ' -f 2)
+                            echo $(oc get pods --field-selector=status.phase=Running)
                                   
                             oc get pods --field-selector=status.phase=Running \
                                   | grep "${POD_NAME}" \
