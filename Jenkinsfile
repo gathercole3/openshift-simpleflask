@@ -97,7 +97,7 @@ pipeline {
 
                  sh '''
                     oc get pods --field-selector=status.phase=Running \
-                                | grep "${TAGGED_APP_NAME}" \
+                                | grep "${POD_NAME}" \
                                 | cut -d ' ' -f 1 \
                                 | awk -F- '{ print $(NF-1), $0 }' \
                                 | sort -k1 -n -u \
