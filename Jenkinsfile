@@ -11,10 +11,9 @@ pipeline {
         BC_NAME = "${APP_NAME}-build-${GIT_COMMIT}"
         CM_NAME = "${APP_NAME}-${GIT_COMMIT}"
         IMAGE_NAME= "docker-registry.default.svc:5000/${OPENSHIFT_PROJECT}/${APP_NAME}:${GIT_COMMIT}"
-        POD_NAME= "${APP_NAME}-${GIT_COMMIT}-"
+        POD_NAME= "${APP_NAME}-${GIT_COMMIT}"
 
         DEPLOYED_POD_NAME= ""
-        POD_NAME_FILE="POD_${GIT_COMMIT}.tmp"
   }
 
   stages {
@@ -95,37 +94,9 @@ pipeline {
                       -p POD_NAME=${POD_NAME}
                     '''
 
-                 sh '''
-                    a=0
-                    while [ $a -lt 5 ]
-                    do
-                      if [ oc get pods --field-selector=status.phase=Running | grep "${POD_NAME}" == "" ]; then
-                            sleep 2
-                            i=$((i + 1))
-                      else
-                            echo $(oc get pods --field-selector=status.phase=Running \
-                                  | grep "${POD_NAME}" \
-                                  | cut -d ' ' -f 1 \
-                                  | awk -F- '{ print $(NF-1), $0 }' \
-                                  | sort -k1 -n -u \
-                                  | tail -n1 \
-                                  | cut -d ' ' -f 2)
-                                  
-                            oc get pods --field-selector=status.phase=Running \
-                                  | grep "${POD_NAME}" \
-                                  | cut -d ' ' -f 1 \
-                                  | awk -F- '{ print $(NF-1), $0 }' \
-                                  | sort -k1 -n -u \
-                                  | tail -n1 \
-                                  | cut -d ' ' -f 2  >${POD_NAME_FILE}
-                            break
-                      fi
-                    done
-                    '''
-
 
                  sh '''
-                    oc exec $(cat ${POD_NAME_FILE}) curl https://google.co.uk
+                    oc exec ${POD_NAME} curl https://google.co.uk
                 '''
               }
           }
@@ -138,7 +109,7 @@ pipeline {
         script {
           if( BRANCH_NAME.startsWith('PR-') ) {
             sh 'oc delete configmaps ${CM_NAME}'
-            sh 'oc delete pod $(cat ${POD_NAME_FILE})'
+            sh 'oc delete pod $(cat ${POD_NAME})'
           }
         }
     }

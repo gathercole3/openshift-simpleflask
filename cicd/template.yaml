@@ -24,4 +24,4 @@ parameters:
   name: DOCKER_IMAGE
 - description: name of pod to be deployed
   name: POD_NAME
-  value: simpleflask-
+  value: simpleflask
