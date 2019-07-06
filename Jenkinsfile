@@ -4,7 +4,6 @@ pipeline {
     disableConcurrentBuilds()
   }
   
-
   environment {
         OPENSHIFT_PROJECT = 'sandbox'
         APP_NAME = 'simpleflask'
