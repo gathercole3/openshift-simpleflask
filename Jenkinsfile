@@ -96,13 +96,23 @@ pipeline {
                     '''
 
                  sh '''
-                    oc get pods --field-selector=status.phase=Running \
-                                | grep "${TAGGED_APP_NAME}" \
-                                | cut -d ' ' -f 1 \
-                                | awk -F- '{ print $(NF-1), $0 }' \
-                                | sort -k1 -n -u \
-                                | tail -n1 \
-                                | cut -d ' ' -f 2  >${POD_NAME_FILE}
+                    a=0
+                    while [ $a -lt 5 ]
+                    do
+                      if [ oc get pods --field-selector=status.phase=Running | grep "${POD_NAME}" == "" ]; then
+                            sleep 2
+                            i=$((i + 1))
+                      else
+                            oc get pods --field-selector=status.phase=Running \
+                                  | grep "${POD_NAME}" \
+                                  | cut -d ' ' -f 1 \
+                                  | awk -F- '{ print $(NF-1), $0 }' \
+                                  | sort -k1 -n -u \
+                                  | tail -n1 \
+                                  | cut -d ' ' -f 2  >${POD_NAME_FILE}
+                            break
+                      fi
+                    done
                     '''
 
 
