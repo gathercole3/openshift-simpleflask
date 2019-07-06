@@ -78,6 +78,21 @@ pipeline {
                       -p DOCKER_IMAGE=${IMAGE_NAME} \
                       -p POD_NAME=${POD_NAME}
                     '''
+
+                 echo 'waiting for pod to be healthy'
+
+                 sh '''
+                    a=0
+                    while [ $a -lt 5 ]
+                    do
+                        if [ oc get pods --field-selector=status.phase=Running | grep "${POD_NAME}" == "" ]; then
+                            sleep 2
+                            a=$((a + 1))
+                         else
+                            break
+                        fi
+                    done
+                '''
               }
           }
 
