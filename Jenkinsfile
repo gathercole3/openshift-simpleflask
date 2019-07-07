@@ -55,6 +55,7 @@ pipeline {
       steps {
         script {
           if( BRANCH_NAME.startsWith('PR-') ) {
+            echo "${IMAGE_NAME}"
 
             sh """
                       oc get bc/${BC_NAME} \
