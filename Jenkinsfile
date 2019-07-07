@@ -1,3 +1,14 @@
+def getImageTag = { String COMMIT, String BRANCH_NAME ->
+    // branch names for develop and master will be named 'latest' and 'stable'
+    switch (BRANCH_NAME) {
+        case ~/^master$/:
+            return 'latest'
+        default:
+            return COMMIT
+    }
+}
+
+
 pipeline {
   agent { label('maven') }
   options {
@@ -6,12 +17,16 @@ pipeline {
   
 
   environment {
+        IMAGE_TAG = getImageTag(GIT_COMMIT, BRANCH_NAME)
+        REGISTRY = "docker-registry.default.svc:5000/"
+        IMAGE = "${OPENSHIFT_PROJECT}/${APP_NAME}"
+
         OPENSHIFT_PROJECT = 'sandbox'
         APP_NAME = 'simpleflask'
-        BC_NAME = "${APP_NAME}-build-${GIT_COMMIT}"
-        CM_NAME = "${APP_NAME}-${GIT_COMMIT}"
-        IMAGE_NAME= "docker-registry.default.svc:5000/${OPENSHIFT_PROJECT}/${APP_NAME}:${GIT_COMMIT}"
-        POD_NAME= "${APP_NAME}-${GIT_COMMIT}"
+        BC_NAME = "${APP_NAME}-build-${IMAGE_TAG}"
+        CM_NAME = "${APP_NAME}-${IMAGE_TAG}"
+        IMAGE_NAME = "${REGISTRY}${IMAGE}:${IMAGE_TAG}"
+        POD_NAME= "${APP_NAME}-${IMAGE_TAG}"
 
         DEPLOYED_POD_NAME= ""
   }
@@ -21,7 +36,7 @@ pipeline {
       steps {
         echo "Set Openshift project"
         sh "oc project ${OPENSHIFT_PROJECT}"
-        echo "${GIT_COMMIT}"
+        echo "${IMAGE_TAG}"
       }
     }
 
@@ -39,31 +54,31 @@ pipeline {
 
     stage('build and publish docker image to internal registry') {
       steps {
-        sh '''
-                    oc get bc/${BC_NAME} \
-                        || oc new-build \
-                            --binary=true  \
-                            --name="${BC_NAME}" \
-                            --to="${IMAGE_NAME}" \
-                            --strategy="docker"
-                    '''
+        script {
+          if( BRANCH_NAME.startsWith('PR-') ) {
+            echo "${IMAGE_NAME}"
 
-        sh '''
-              oc start-build ${BC_NAME} -n sandbox \
-              --from-repo=. \
-              --follow=true \
-              --wait=true \
-              --commit=${GIT_COMMIT}
-              '''
-        }
+            sh """
+                      oc get bc/${BC_NAME} \
+                          || oc new-build \
+                              --binary=true  \
+                              --name="${BC_NAME}" \
+                              --to="${IMAGE}:${IMAGE_TAG}" \
+                              --strategy="docker"
+                      """
 
-      post {
-        always { 
-            echo 'cleanup build config'
-            sh 'oc delete bc/${BC_NAME}'
+            sh """
+                  oc start-build ${BC_NAME} -n sandbox \
+                  --from-repo=. \
+                  --follow=true \
+                  --wait=true \
+                  --commit=${GIT_COMMIT}
+                  """
+          } else if(BRANCH_NAME == "master") {
+            sh "oc image mirror ${IMAGE}:${GIT_COMMIT} ${IMAGE_NAME}"
+          }
         }
       }
-
 
     }
 
@@ -72,6 +87,7 @@ pipeline {
                 expression { BRANCH_NAME.startsWith('PR-')}
             }
             steps {
+                 echo "${IMAGE_NAME}"
                  sh '''
                     oc new-app -f ./cicd/template.yaml \
                       -p CONFIG_MAP=${CM_NAME} \
@@ -83,7 +99,7 @@ pipeline {
 
                  sh '''
                     a=0
-                    while [ $a -lt 5 ]
+                    while [ $a -lt 10 ]
                     do
                         if [ "$(oc get pods --field-selector=status.phase=Running | grep "${POD_NAME}")" == "" ]; then
                             sleep 2
@@ -117,6 +133,7 @@ pipeline {
           if( BRANCH_NAME.startsWith('PR-') ) {
             sh "oc delete configmaps ${CM_NAME}"
             sh "oc delete pod ${POD_NAME}"
+            sh 'oc delete bc/${BC_NAME}'
           }
         }
     }
