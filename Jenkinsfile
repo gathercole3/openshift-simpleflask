@@ -56,22 +56,22 @@ pipeline {
         script {
           if( BRANCH_NAME.startsWith('PR-') ) {
 
-            sh '''
+            sh """
                       oc get bc/${BC_NAME} \
                           || oc new-build \
                               --binary=true  \
                               --name="${BC_NAME}" \
                               --to="${IMAGE_NAME}" \
                               --strategy="docker"
-                      '''
+                      """
 
-            sh '''
+            sh """
                   oc start-build ${BC_NAME} -n sandbox \
                   --from-repo=. \
                   --follow=true \
                   --wait=true \
                   --commit=${GIT_COMMIT}
-                  '''
+                  """
           } else if(BRANCH_NAME == "master") {
             sh "oc image mirror ${IMAGE}:${GIT_COMMIT} ${IMAGE_NAME}"
           }
