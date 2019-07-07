@@ -98,7 +98,7 @@ pipeline {
 
                  sh '''
                     a=0
-                    while [ $a -lt 5 ]
+                    while [ $a -lt 10 ]
                     do
                         if [ "$(oc get pods --field-selector=status.phase=Running | grep "${POD_NAME}")" == "" ]; then
                             sleep 2
