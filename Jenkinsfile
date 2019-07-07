@@ -87,6 +87,7 @@ pipeline {
                 expression { BRANCH_NAME.startsWith('PR-')}
             }
             steps {
+                 echo "${IMAGE_NAME}"
                  sh '''
                     oc new-app -f ./cicd/template.yaml \
                       -p CONFIG_MAP=${CM_NAME} \
