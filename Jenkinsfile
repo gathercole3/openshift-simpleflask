@@ -75,7 +75,7 @@ pipeline {
                   --commit=${GIT_COMMIT}
                   """
           } else if(BRANCH_NAME == "master") {
-            sh 'oc tag ${IMAGE}:${GIT_COMMIT} ${IMAGE}:$(git rev-list --max-count=1 head^2)'
+            sh 'oc tag ${IMAGE}:$(git rev-list --max-count=1 ${GIT_COMMIT}^2) ${IMAGE}:${IMAGE_TAG}'
           }
         }
       }
