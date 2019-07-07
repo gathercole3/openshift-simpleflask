@@ -75,7 +75,7 @@ pipeline {
                   --commit=${GIT_COMMIT}
                   """
           } else if(BRANCH_NAME == "master") {
-            sh "oc image mirror ${IMAGE}:${GIT_COMMIT} ${IMAGE_NAME}"
+            sh "oc image mirror ${REGISTRY}${IMAGE}:${GIT_COMMIT} ${IMAGE_NAME}"
           }
         }
       }
@@ -130,8 +130,8 @@ pipeline {
     always { 
         echo 'cleanup configmap'
         script {
+          sh "oc delete configmaps ${CM_NAME}"
           if( BRANCH_NAME.startsWith('PR-') ) {
-            sh "oc delete configmaps ${CM_NAME}"
             sh "oc delete pod ${POD_NAME}"
             sh 'oc delete bc/${BC_NAME}'
           }
