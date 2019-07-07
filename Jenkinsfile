@@ -18,13 +18,14 @@ pipeline {
 
   environment {
         IMAGE_TAG = getImageTag(GIT_COMMIT, BRANCH_NAME)
-        IMAGE = "docker-registry.default.svc:5000/${OPENSHIFT_PROJECT}/${APP_NAME}:${IMAGE_TAG}"
+        REGISTRY = "docker-registry.default.svc:5000/"
+        IMAGE = "${OPENSHIFT_PROJECT}/${APP_NAME}:${IMAGE_TAG}"
 
         OPENSHIFT_PROJECT = 'sandbox'
         APP_NAME = 'simpleflask'
         BC_NAME = "${APP_NAME}-build-${IMAGE_TAG}"
         CM_NAME = "${APP_NAME}-${IMAGE_TAG}"
-        IMAGE_NAME = "${IMAGE}:${IMAGE_TAG}"
+        IMAGE_NAME = "${REGISTRY}${IMAGE}:${IMAGE_TAG}"
         POD_NAME= "${APP_NAME}-${IMAGE_TAG}"
 
         DEPLOYED_POD_NAME= ""
@@ -62,7 +63,7 @@ pipeline {
                           || oc new-build \
                               --binary=true  \
                               --name="${BC_NAME}" \
-                              --to="${IMAGE_NAME}" \
+                              --to="${IMAGE}" \
                               --strategy="docker"
                       """
 
