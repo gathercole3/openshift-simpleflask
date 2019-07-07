@@ -19,7 +19,7 @@ pipeline {
   environment {
         IMAGE_TAG = getImageTag(GIT_COMMIT, BRANCH_NAME)
         REGISTRY = "docker-registry.default.svc:5000/"
-        IMAGE = "${OPENSHIFT_PROJECT}/${APP_NAME}:${IMAGE_TAG}"
+        IMAGE = "${OPENSHIFT_PROJECT}/${APP_NAME}"
 
         OPENSHIFT_PROJECT = 'sandbox'
         APP_NAME = 'simpleflask'
@@ -63,7 +63,7 @@ pipeline {
                           || oc new-build \
                               --binary=true  \
                               --name="${BC_NAME}" \
-                              --to="${IMAGE}" \
+                              --to="${IMAGE}:${IMAGE_TAG}" \
                               --strategy="docker"
                       """
 
