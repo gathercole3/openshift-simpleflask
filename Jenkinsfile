@@ -43,6 +43,12 @@ pipeline {
 
     stage('build config map') {
       steps {
+        script {
+          if( BRANCH_NAME == "master" ) {
+            sh "oc delete configmaps ${CM_NAME}"
+          }
+        }
+
         sh '''
         oc create configmap ${CM_NAME} \
           --from-literal=APP_NAME=flask-frontend-skeleton \
@@ -130,10 +136,10 @@ pipeline {
     always { 
         echo 'cleanup configmap'
         script {
-          sh "oc delete configmaps ${CM_NAME}"
           if( BRANCH_NAME.startsWith('PR-') ) {
             sh "oc delete pod ${POD_NAME}"
             sh 'oc delete bc/${BC_NAME}'
+            sh "oc delete configmaps ${CM_NAME}"
           }
         }
     }
