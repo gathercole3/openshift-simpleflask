@@ -24,7 +24,7 @@ pipeline {
         APP_NAME = 'simpleflask'
         BC_NAME = "${APP_NAME}-build-${IMAGE_TAG}"
         CM_NAME = "${APP_NAME}-${IMAGE_TAG}"
-        IMAGE_NAME= "${IMAGE}:${IMAGE_TAG}"
+        IMAGE_NAME = "${IMAGE}:${IMAGE_TAG}"
         POD_NAME= "${APP_NAME}-${IMAGE_TAG}"
 
         DEPLOYED_POD_NAME= ""
@@ -64,7 +64,7 @@ pipeline {
                               --to="${IMAGE_NAME}" \
                               --strategy="docker"
                       '''
-                      
+
             sh '''
                   oc start-build ${BC_NAME} -n sandbox \
                   --from-repo=. \
