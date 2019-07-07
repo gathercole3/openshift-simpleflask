@@ -75,7 +75,7 @@ pipeline {
                   --commit=${GIT_COMMIT}
                   """
           } else if(BRANCH_NAME == "master") {
-            sh "oc image mirror --insecure ${REGISTRY}${IMAGE}:${GIT_COMMIT} ${IMAGE_NAME}"
+            sh "oc tag ${IMAGE}:${GIT_COMMIT} ${IMAGE}:${IMAGE_TAG}"
           }
         }
       }
