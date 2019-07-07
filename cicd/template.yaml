@@ -2,66 +2,41 @@ apiVersion: v1
 kind: Template
 metadata:
   name: simpleflask-template
-objects: {
-  "kind": "DeploymentConfig",
-  "apiVersion": "v1",
-  "metadata": {
-    "name": "${POD_NAME}"
-  },
-  "spec": {
-    "template": { 
-      "metadata": {
-        "labels": {
-          "name": "${POD_NAME}"
-        }
-      },
-      "spec": {
-        "containers": [
-          {
-            "name": "${POD_NAME}",
-            "image": "${DOCKER_IMAGE}",
-            "ports": [
-              {
-                "containerPort": 8000,
-                "protocol": "TCP"
-              }
-            ]
-            "envFrom": [
-              "configMapRef": {
-                "name": "${CONFIG_MAP}"
-              }
-            ]
-          }
-        ]
-      }
-    }
-    "replicas": 1, 
-    "selector": {
-      "name": "frontend"
-    },
-    "triggers": [
-      {
-        "type": "ConfigChange" 
-      },
-      {
-        "type": "ImageChange", 
-        "imageChangeParams": {
-          "automatic": true,
-          "containerNames": [
-            "helloworld"
-          ],
-          "from": {
-            "kind": "ImageStreamTag",
-            "name": "${DOCKER_IMAGE}"
-          }
-        }
-      }
-    ],
-    "strategy": { 
-      "type": "Rolling"
-    }
-  }
-}
+objects:
+  - kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: ${POD_NAME}
+  spec:
+    template:  
+      metadata: 
+        labels: 
+          name: ${POD_NAME}
+      spec:
+        containers:
+            - name: ${POD_NAME}
+            image: ${DOCKER_IMAGE}
+            ports:
+                - containerPort: 8000
+                protocol: TCP
+            envFrom:
+              configMapRef:
+                name: ${CONFIG_MAP}
+    replicas": 1
+    selector":
+      name: frontend
+    triggers:
+      - type: ConfigChange
+      - type: ImageChange 
+        imageChangeParams:
+          automatic: true
+          containerNames:
+            -helloworld
+          from:
+            kind: ImageStreamTag
+            name: ${DOCKER_IMAGE}
+    strategy: 
+      type: Rolling
 parameters:
 - description: configmap to use for environment variables
   name: CONFIG_MAP
