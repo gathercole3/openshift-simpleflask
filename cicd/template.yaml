@@ -22,8 +22,8 @@ objects:
               envFrom:
                 configMapRef:
                   name: ${CONFIG_MAP}
-    replicas": 1
-    selector":
+    replicas: 1
+    selector:
       name: frontend
     triggers:
       - type: ConfigChange
