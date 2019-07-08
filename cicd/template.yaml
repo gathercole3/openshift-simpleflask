@@ -3,20 +3,40 @@ kind: Template
 metadata:
   name: simpleflask-template
 objects:
-- apiVersion: v1
-  kind: Pod
-  metadata:
-    name: ${POD_NAME}
-  spec:
-    containers:
-    - envFrom: 
-        - configMapRef:
-            name: ${CONFIG_MAP}
-      image: ${DOCKER_IMAGE}
-      name: simpleflask
-      ports:
-      - containerPort: 8000
-        protocol: TCP
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: ${POD_NAME}
+    spec:
+      template:  
+        metadata: 
+          labels: 
+            name: ${POD_NAME}
+        spec:
+          containers:
+            - name: ${POD_NAME}
+              image: ${DOCKER_IMAGE}
+              ports:
+                - containerPort: 8000
+                  protocol: TCP
+              envFrom:
+                configMapRef:
+                  name: ${CONFIG_MAP}
+    replicas: 1
+    selector:
+      name: frontend
+    triggers:
+      - type: ConfigChange
+      - type: ImageChange 
+        imageChangeParams:
+          automatic: true
+          containerNames:
+            - ${POD_NAME}
+          from:
+            kind: ImageStreamTag
+            name: ${DOCKER_IMAGE}
+    strategy: 
+      type: Rolling
 parameters:
 - description: configmap to use for environment variables
   name: CONFIG_MAP
