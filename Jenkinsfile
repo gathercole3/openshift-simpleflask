@@ -37,6 +37,7 @@ pipeline {
         echo "Set Openshift project"
         sh "oc project ${OPENSHIFT_PROJECT}"
         echo "${IMAGE_TAG}"
+        echo "${BRANCH_NAME}"
       }
     }
 
