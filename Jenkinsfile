@@ -71,7 +71,7 @@ pipeline {
                               --binary=true  \
                               --name="${BC_NAME}" \
                               --to="${IMAGE}:${IMAGE_TAG}" \
-                              --strategy="docker"
+                              --strategy="pipeline"
                       """
 
             sh """
